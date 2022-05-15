@@ -1,3 +1,20 @@
+<?php
+include 'classes/dbh.class.php';
+include 'classes/test.class.php';
+$msg="";
+$error="";
+if ($_GET['error']=null || $_GET['message']=null) {
+    # code...
+}
+elseif ($_GET['error']=="stmtfailed") {
+    $error ="Query Has Problem";
+}elseif($_GET['message']=="stmtok") {
+    $msg ="Now you are Added";
+}
+
+
+?>
+
 <!DOCTYPE html>
 <html lang="en">
 
@@ -20,8 +37,12 @@
 <body>
     <?php  include 'includes/header.php';?>
     <div class="container">
-        <div class="col-md-4">
-            <div class="row">
+        <div class="row">
+
+            <!-- login div -->
+            <div class="col-md-4">
+
+                <h3>Login</h3>
                 <form>
                     <!-- Email input -->
                     <div class="form-outline mb-4">
@@ -55,8 +76,76 @@
                     <button type="submit" class="btn btn-primary btn-block">Sign in</button>
                 </form>
             </div>
-        </div>
+            <!-- ends of login div -->
 
+
+            <div class="col-md-8">
+
+                <h3>New Account</h3>
+
+                <div class="row">
+                    <div class="col-sm-6">
+                        <!---Success Message--->
+
+                        <?php if($msg){ ?>
+                        <div class="alert alert-success" role="alert">
+                            <strong>Well done!</strong> <?php echo htmlentities($msg);?>
+                        </div>
+                        <?php } ?>
+                        <!---Error Message--->
+                        <?php if($error){ ?>
+                        <div class="alert alert-danger" role="alert">
+                            <strong>Oh snap!</strong> <?php echo htmlentities($error);?>
+                        </div>
+                        <?php } ?>
+                    </div>
+                </div>
+                <form method="POST" action="includes/AddAction.incl.php">
+                    <!-- 2 column grid layout with text inputs for the first and last names -->
+                    <div class="row mb-4">
+                        <div class="col">
+                            <div class="form-outline">
+                                <input type="text" name="fname" id="form3Example1" class="form-control" />
+                                <label class="form-label" for="form3Example1">First name</label>
+                            </div>
+                        </div>
+                        <div class="col">
+                            <div class="form-outline">
+                                <input type="text" name="lname" id="form3Example2" class="form-control" />
+                                <label class="form-label" for="form3Example2">Last name</label>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Email input -->
+                    <div class="row mb-4">
+                        <div class="col">
+                            <div class="form-outline">
+                                <input type="email" name="email" id="form3Example3" class="form-control" />
+                                <label class="form-label" for="form3Example3">Email address</label>
+                            </div>
+                        </div>
+                        <div class="col">
+                            <div class="form-outline">
+                                <input type="text" name="phone" id="form3Example2" class="form-control" />
+                                <label class="form-label" for="form3Example2">Phone Number</label>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Password input -->
+                    <div class="form-outline mb-4">
+                        <input type="password" name="password" id="form3Example4" class="form-control" />
+                        <label class="form-label" for="form3Example4">Password</label>
+                    </div>
+
+
+                    <!-- Submit button -->
+                    <input type="submit" name="savebtn" class="btn btn-primary" value="Sign Up">
+
+                </form>
+            </div>
+        </div>
     </div>
 
 </body>
