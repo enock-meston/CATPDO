@@ -28,14 +28,11 @@ include 'classes/test.class.php';
     <link rel="stylesheet" href="boostrapmdb/css/mdb.min.css" />
 </head>
 <body>
+    <?php  include 'includes/header.php';?>
     <div class="container">
         <div class="row">
             <h3>Welcome</h3>
-            <?php
-                $testObject = new Test();
-                $testObject->getUsersStmt("enock","enock11@gmail");
-
-            ?>
+            
         </div>
     </div>
 </body>
