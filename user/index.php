@@ -2,7 +2,7 @@
 session_start();
 $error = "";
 $msg = "";
-include('../includes/config.php');
+include('includes/config.php');
 error_reporting(0);
 if (strlen($_SESSION['email']) == 0) {
     header('location:../index.php');
@@ -10,19 +10,22 @@ if (strlen($_SESSION['email']) == 0) {
 
     $vid = $_GET['v'];
     if (isset($_GET['v'])) {
+        $userID= $_SESSION['user_id'];
         $status=1;
-        $checkrequest = mysqli_query($con, "SELECT * FROM tblreservation WHERE visitor='".$_SESSION['user_id']."' AND parkid='$vid'");
-        if (mysqli_num_rows($checkrequest) > 0) {
+        $checkrequest = "SELECT * FROM tblreservation WHERE visitor=? AND parkid=?";
+        $stmt= $dbh->prepare($checkrequest);
+        $stmt->execute([$userID,$vid]);
+        if ($stmt->rowCount() > 0) {
             $error ="you are areald requested this park please try otherones...";
         }else{
-        $query=mysqli_query($con,"INSERT INTO `tblreservation`(`parkid`, `visitor`, `Status`) 
-        VALUES ('$vid','".$_SESSION['user_id']."','$status')");
-        if ($query) {
-            send_mail("Successfull applyed","Dear ".$_SESSION['firstname']. " ".$_SESSION['lastname']." <br>
+        $resquery="INSERT INTO `tblreservation`(`parkid`, `visitor`, `Status`) VALUES (?,?,?)";
+        $stmtres= $dbh->prepare($resquery);
+        $stmtres->execute([$vid,$userID,$status]);
 
+        if ($stmtres->execute([$vid,$userID,$status])) {
+            send_mail("Successfull applyed","Dear ".$_SESSION['firstname']. " ".$_SESSION['lastname']." <br>
             Thank you For asking of reservation with us!<br>",$_SESSION['email']);
             $msg= "Successful Applyed, now check your email";
-
         }else{
             $error ="Sothing Went wrong...";
         }
@@ -98,16 +101,18 @@ if (strlen($_SESSION['email']) == 0) {
                     <div class="row">
                         <!-- stating video / one video  / dispplating videos-->
                         <?php
-
-                            $query = mysqli_query($con, "SELECT * FROM `tblparks` WHERE Status=1");
-                            $count=mysqli_num_rows($query);
-                            if ($count==0) {
+                            $st =1;
+                            $query = "SELECT * FROM `tblparks` WHERE Status=?";
+                            $statment= $dbh->prepare($query);
+                            $statment->execute([$st]);
+                            
+                            if ($statment->rowCount()==0) {
                                 ?>
                         <h4>No record Found!</h4>
                         <?php
                             }else{
 
-                            while ($row = mysqli_fetch_array($query)) {
+                            while ($row = $statment->fetch(PDO::FETCH_OBJ)) {
                                 
                             ?>
                         <div class="col-lg-4">
@@ -116,22 +121,22 @@ if (strlen($_SESSION['email']) == 0) {
                                 <div class="card-body">
                                     <div class="text-center">
                                         <img class="img-fluid px-3 px-sm-0 mt-1 mb-1" style="width: 25rem;"
-                                            src="../admin/thumbnail/<?php echo $row['imagepark']; ?>" alt="...">
+                                            src="../admin/thumbnail/<?php echo $row->imagepark; ?>" alt="...">
                                     </div>
                                     <h6 class="m-0 font-weight-bold"
                                         style="text-overflow: ellipsis; white-space: nowrap; overflow: hidden;">
-                                        <?php echo $row['name']; ?>
+                                        <?php echo $row->name; ?>
                                     </h6>
                                     <p
                                         style="text-overflow: ellipsis; white-space: nowrap; overflow: hidden; color: rgba(0, 0, 0, 1.0); font-size:12px;">
-                                        <?php echo $row['descriptions']; ?>
+                                        <?php echo $row->descriptions; ?>
                                     </p>
-                                    <a class="btn btn-primary" href="index.php?v=<?php echo $row['id']; ?>"
+                                    <a class="btn btn-primary" href="index.php?v=<?php echo $row->id; ?>"
                                         style="text-decoration-line: none; font-size:12px;">
                                         Apply For This
                                     </a>
 
-                                    <a class="btn btn-primary" href="#" data-id="<?php echo $row['id']; ?>"
+                                    <a class="btn btn-primary" href="#" data-id="<?php echo $row->id; ?>"
                                         data-toggle="modal" data-target="#viewModal"
                                         style="text-decoration-line: none; font-size:12px;">
                                         Read More

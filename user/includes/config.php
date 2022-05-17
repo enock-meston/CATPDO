@@ -1,18 +1,18 @@
 <?php
 require 'vendor/autoload.php';
+
 use PHPMailer\PHPMailer\PHPMailer;
 use PHPMailer\PHPMailer\SMTP;
 use PHPMailer\PHPMailer\Exception;
 
-define('DB_SERVER','localhost');
-define('DB_USER','root');
-define('DB_PASS' ,'');
-define('DB_NAME','musanze');
-$con = mysqli_connect(DB_SERVER,DB_USER,DB_PASS,DB_NAME);
-// Check connection
-if (mysqli_connect_errno())
-{
- echo "Failed to connect to MySQL: " . mysqli_connect_error();
+try {
+    $username= "root";
+    $password ="";
+    $dbh = new PDO('mysql:host=localhost;dbname=musanze',$username,$password); // this is the db hanlder
+    return $dbh;
+} catch (PDOException $e) {
+    print "EnockEroo! :". $e->getMessage(). "<br>";
+    die();
 }
 
 
@@ -33,17 +33,17 @@ $mail = new PHPMailer(true);
 //Server settings
 //$mail->SMTPDebug = SMTP::DEBUG_SERVER;                      //Enable verbose debug output
 $mail->isSMTP();                                            //Send using SMTP
-$mail->Host       = 'smtp.gmail.com';                     //Set the SMTP server to send through
+$mail->Host       = 'smtp.hostinger.com';                     //Set the SMTP server to send through
 $mail->SMTPAuth   = true;                                   //Enable SMTP authentication
-$mail->Username   = 'kibihekanetourism@gmail.com';                     //SMTP username
-$mail->Password   = 'Kibihekane1@';                               //SMTP password
+$mail->Username   = 'pro@nigoote.com';                     //SMTP username
+$mail->Password   = 'Enock@123';                               //SMTP password
 $mail->SMTPSecure = PHPMailer::ENCRYPTION_STARTTLS;         //Enable TLS encryption; `PHPMailer::ENCRYPTION_SMTPS` encouraged
 $mail->Port       = 587;                                    //TCP port to connect to, use 465 for `PHPMailer::ENCRYPTION_SMTPS` above
 
 //Recipients
-$mail->setFrom('kibihekanetourism@gmail.com');
-$mail->addAddress($to);               //Name is optional
-$mail->addReplyTo('kibihekanetourism@gmail.com');
+$mail->setFrom('pro@nigoote.com');
+$mail->addAddress($to);                  //Name is optional
+$mail->addReplyTo('pro@nigoote.com');
 
 
 //$body = mysqli_real_escape_string($con, $content);

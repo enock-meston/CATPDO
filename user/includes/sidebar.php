@@ -83,23 +83,27 @@
                             </tfoot>
                             <tbody>
                                 <?php
-                                                $select = mysqli_query($con,"SELECT tblreservation.rid as rid,tblreservation.parkid as parkid,
-                                                tblreservation.visitor as visitor, tblreservation.date as date,tblreservation.Status as Status,
+                                $uid= $_SESSION['user_id'];
+                                                $select = "SELECT tblreservation.rid as rid,tblreservation.parkid as parkid,
+                                                tblreservation.visitor as visitor, tblreservation.date as date,tblreservation.Status as status,
                                                 tblvisitors.vid as vid,tblvisitors.firstname as firstname,tblvisitors.lastnmae as lastname,
                                                 tblvisitors.phonenumber as phonenumber, tblvisitors.email as email,tblparks.id as pid,
                                                 tblparks.name as pname from tblreservation LEFT JOIN tblvisitors on tblreservation.visitor =tblvisitors.vid 
-                                                LEFT JOIN tblparks ON tblreservation.parkid = tblparks.id WHERE tblvisitors.vid = '".$_SESSION['user_id']."'");
-                                                while ($row = mysqli_fetch_array($select)) {
+                                                LEFT JOIN tblparks ON tblreservation.parkid = tblparks.id WHERE tblvisitors.vid = ?";
+                                                $QuerySt = $dbh->prepare($select);
+                                                $QuerySt->execute(array($uid."%"));
+                                                while ($row1 = $QuerySt->fetch(PDO::FETCH_OBJ)) {
                                                    
                                             ?>
                                 <tr>
-                                    <td><?php echo $row['firstname'] ." ".$row['lastname'];?></td>
-                                    <td><?php echo $row['phonenumber'];?></td>
-                                    <td><?php echo $row['pname'];?></td>
-                                    <td><?php echo $row['date'];?></td>
+                                    <td><?php echo $row1->firstname." ".$row1->lastname;?></td>
+                                    <td><?php echo $row1->phonenumber;?></td>
+                                    <td><?php echo $row1->pname;?></td>
+                                    <td><?php echo $row1->date;?></td>
                                     <td>
                                         <?php
-                                            if ($row['Status']==1) {
+                                        $st = $row1->status;
+                                            if ($st == 1) {
                                         ?>
                                         <a class="btn btn-dark">Pending</a>
                                         <?php

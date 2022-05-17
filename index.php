@@ -2,8 +2,42 @@
 session_start();
 $error = "";
 $msg = "";
+include('includes/config.php');
+if (isset($_POST['loginbtn'])) {
+    $emailtxt = $_POST['email'];
+    $passtxt = $_POST['password'];
+    $hashespas = password_hash($passtxt, PASSWORD_BCRYPT);
+
+    $selectQuery = "SELECT * FROM tblvisitors WHERE email=? OR phonenumber=?";
+    $loginStatement =$dbh->prepare($selectQuery);
+    $loginStatement->execute([$emailtxt,$passtxt]);
 
 
+    if ($loginStatement->rowCount() == 1) {
+        $one = $loginStatement->fetch(PDO::FETCH_OBJ);
+        $db_password = $one->password;
+        $verified = $one->verified;
+        $email = $one->email;
+        $fname =$one->firstname;
+        $lname =$one->lastnmae;
+        if (password_verify($passtxt, $db_password)) {
+            // lest set the sessions here!!!
+            $_SESSION['user_id'] = $one->vid;
+            $_SESSION['email'] = $one->email;
+            $_SESSION['phone'] = $one->phonenumber;
+            $_SESSION['firstname'] = $one->firstname;
+            $_SESSION['lastnmae'] = $one->lastnmae;
+            header("location: user/index.php");
+            } 
+            else {
+            // password does not match
+            $error = "Password does not match with any of account , Please try again later!!";
+        }
+    } else {
+        // password does not match
+        $error = "Invalid user credintials , Please try again later!!";
+    }
+}
 ?>
 <!DOCTYPE html>
 <html lang="en">

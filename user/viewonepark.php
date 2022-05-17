@@ -3,10 +3,13 @@ include('../includes/config.php');
 if(isset($_POST['rowid'])){
 
 
-	$id = trim($_POST['rowid']);
-	$query=mysqli_query($con,"SELECT * FROM `tblparks` WHERE id = '$id'");
-	if(mysqli_num_rows($query)>=1) {
-		$row1=mysqli_fetch_array($query)
+	$id =$_POST['rowid'];
+	$query="SELECT * FROM `tblparks` WHERE id =?";
+	$statementA = $dbh->prepare($query);
+	$statementA->execute([$id]);
+	$count->rowCount($statementA);
+	if($count>=1) {
+		$row1 = $statementA->fetch(PDO::FETCH_OBJ)
 		?>
 		<h5><?php echo $row1['name'] ;?></h5>
 		<p><?php echo $row1['descriptions'];?></p>
