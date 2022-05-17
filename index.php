@@ -2,39 +2,8 @@
 session_start();
 $error = "";
 $msg = "";
-include('includes/config.php');
-if (isset($_POST['loginbtn'])) {
-    $emailtxt = $_POST['email'];
-    $passtxt = $_POST['password'];
-    $hashespas = password_hash($passtxt, PASSWORD_BCRYPT);
-    $select = mysqli_query($con, "SELECT * FROM tblvisitors WHERE email='" . trim($emailtxt) . "' OR phonenumber='" . trim($emailtxt) . "'") or die(mysqli_error($con));
 
 
-    if (mysqli_num_rows($select) == 1) {
-        $row = mysqli_fetch_array($select);
-        $db_password = $row['password'];
-        $verified = $row['verified'];
-        $email = $row['email'];
-        $fname =$row['firstname'];
-        $lname =$row['lastnmae'];
-        if (password_verify(mysqli_real_escape_string($con, trim($_POST['password'])), $db_password)) {
-            // lest set the sessions here!!!
-            $_SESSION['user_id'] = $row['vid'];
-            $_SESSION['email'] = $row['email'];
-            $_SESSION['phone'] = $row['phonenumber'];
-            $_SESSION['firstname'] = $row['firstname'];
-            $_SESSION['lastnmae'] = $row['lastnmae'];
-            header("location: user/index.php");
-            } 
-            else {
-            // password does not match
-            $error = "Password does not match with any of account , Please try again later!!";
-        }
-    } else {
-        // password does not match
-        $error = "Invalid user credintials , Please try again later!!";
-    }
-}
 ?>
 <!DOCTYPE html>
 <html lang="en">

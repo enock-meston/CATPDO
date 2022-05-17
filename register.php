@@ -3,46 +3,50 @@ include 'includes/config.php';
 $error = "";
 $msg = "";
 $subject="Checkout Tourism.com Account Creation";
-// send_mail("cool","register","ndagijimanaenock22@gmail.com");
+
 if (isset($_POST['savebtn'])) {
-    $fname=mysqli_real_escape_string($con,trim($_POST['fname']));
-    $lname=mysqli_real_escape_string($con,trim($_POST['lname']));
-    $phone=mysqli_real_escape_string($con,trim($_POST['phone']));
-    $email =mysqli_real_escape_string($con,trim($_POST['email']));
+    $fname=$_POST['fname'];
+    $lname=$_POST['lname'];
+    $phone=$_POST['phone'];
+    $email =$_POST['email'];
     $password =$_POST['pass'];
     $cpass =$_POST['cpass'];
     // generate verify key
-    $vkey = md5(time().$phone);
-       
+    $vkey = md5(time().$phone);   
 
-    $select_chech = mysqli_query($con, "SELECT * FROM tblvisitors WHERE email='".trim($_POST['email'])."' OR phonenumber='".trim($_POST['phone'])."'");
-    if (mysqli_num_rows($select_chech) > 0) {
-        echo "<script>alert('email or Phone Number is areald used! try again...');</script>";
-    }elseif ($password != $cpass) {
-        $error ="Password are not Match";
-    }
-    elseif (mysqli_num_rows($select_chech)==0) { 
+    $select_chech = "SELECT * FROM tblvisitors WHERE email= ? OR phonenumber= ?";
+    $stmt =$dbh->prepare($select_chech);
+    $stmt->execute([$email,$phone]);
+
+    if ($stmt->rowCount() > 0) {
+         $error = "email or Phone Number is alread taken";
+    } else {
         $hashpassword=password_hash($password, PASSWORD_BCRYPT);
         $status=1;
         $verified=0;
         $reference=rand(1000,9999); // token reference
-        $insert=mysqli_query($con,"INSERT INTO `tblvisitors`(`reference`, `firstname`, `lastnmae`, `phonenumber`, `email`, `password`, 
+        $insert="INSERT INTO `tblvisitors`(`reference`, `firstname`, `lastnmae`, `phonenumber`, `email`, `password`, 
         `status`, `vkey`, `verified`) VALUES 
-        ('$reference','$fname','$lname','$phone','$email','$hashpassword','$status','$vkey','$verified')");
-        if ($insert) {
-            $message="Dear ".$fname." ".$lname." has email : '".mysqli_real_escape_string($con, trim($_POST['email']))."'
-            <br><br> Your account was created successfully!<br> Regards,<br><br> Checkout Tourism.com <br>
-            so Click Here to Verify Your Email 
-            <a class='btn btn-primary' href='http://localhost:8080/musanzep/verify.php?vkey=$vkey'>Verify now</a>";
-            send_mail($subject,$message,$email);
-            $msg ="Now you are account was Created, so Check your Email: ".$email;
+        (?,?,?,?,?,?,?,?,?)";
+        $insetStatment = $dbh->prepare($insert);
+     
+        if ($insetStatment->execute([$reference,$fname,$lname,$phone,$email,$hashpassword,$status,$vkey,$verified])) {
+            $message="Dear ".$fname." ".$lname." has email : '".$email."'
+        <br><br> Your account was created successfully!<br> Regards,<br><br> Checkout Tourism.com <br>
+        so Click Here to Verify Your Email 
+        <a class='btn btn-primary' href='http://localhost:8080/cat1/verify.php?vkey=$vkey'>Verify now</a>";
+        send_mail($subject,$message,$email);
+        $msg ="Now you are account was Created, so Check your Email: ".$email;
         }else {
             $error="There is Something Went Wrong";
         }
-    }else {
-        $error="email or Phone Aready used!";
+        
     }
+    
+    
+    
 }
+
 ?>
 <!DOCTYPE html>
 <html lang="en">
