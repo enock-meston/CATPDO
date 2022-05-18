@@ -10,16 +10,20 @@ if (strlen($_SESSION['username']) == 0) {
     
     if (isset($_GET['req'])) {
         $reqid = $_GET['req'];
-        $update = mysqli_query($con,"UPDATE `tblreservation` SET `Status`=2 WHERE rid ='$reqid'");
-        if ($update) {
-            $selectEmail = mysqli_query($con,"SELECT tblreservation.rid as rid,tblreservation.parkid as parkid,
+        // $update = "UPDATE `tblreservation` SET `Status`=2 WHERE rid ='$reqid'";
+        $stUpdat = $dbh->prepare("UPDATE `tblreservation` SET `Status`=2 WHERE rid ='$reqid'");
+        
+        if ($stUpdat->execute()) {
+            $selectEmail = "SELECT tblreservation.rid as rid,tblreservation.parkid as parkid,
             tblreservation.visitor as visitor, tblreservation.date as date,tblreservation.Status as Status,
             tblvisitors.vid as vid,tblvisitors.firstname as firstname,tblvisitors.lastnmae as lastname,
             tblvisitors.phonenumber as phonenumber, tblvisitors.email as email,tblparks.id as pid,
             tblparks.name as pname from tblreservation LEFT JOIN tblvisitors on tblreservation.visitor =tblvisitors.vid 
-            LEFT JOIN tblparks ON tblreservation.parkid = tblparks.id WHERE tblreservation.rid = '$reqid'");
-            $emrow = mysqli_fetch_array($selectEmail);
-            $email=$emrow['email'];
+            LEFT JOIN tblparks ON tblreservation.parkid = tblparks.id WHERE tblreservation.rid = ?";
+            $selectEmailStat = $dbh->prepare($selectEmail);
+            $selectEmailStat->execute([$reqid]);
+            $emrow = $selectEmailStat->fetch(PDO::FETCH_OBJ);
+            $email=$emrow->email;
             send_mail("request Message","Dear <br> now you request was Approved by ".$_SSESION['username']."<br> 
             so Thank you for working with us.",$email);
             $msg ="Successful Approved";
@@ -139,22 +143,24 @@ if (strlen($_SESSION['username']) == 0) {
                                                 </tfoot>
                                                 <tbody>
                                                     <?php
-                                                $select = mysqli_query($con,"SELECT tblreservation.rid as rid,tblreservation.parkid as parkid,
+                                                $select ="SELECT tblreservation.rid as rid,tblreservation.parkid as parkid,
                                                 tblreservation.visitor as visitor, tblreservation.date as date,tblreservation.Status as Status,
                                                 tblvisitors.vid as vid,tblvisitors.firstname as firstname,tblvisitors.lastnmae as lastname,
                                                 tblvisitors.phonenumber as phonenumber, tblvisitors.email as email,tblparks.id as pid,
                                                 tblparks.name as pname from tblreservation LEFT JOIN tblvisitors on tblreservation.visitor =tblvisitors.vid 
-                                                LEFT JOIN tblparks ON tblreservation.parkid = tblparks.id WHERE tblreservation.Status =1");
-                                                while ($row = mysqli_fetch_array($select)) {
+                                                LEFT JOIN tblparks ON tblreservation.parkid = tblparks.id WHERE tblreservation.Status =?";
+                                                $stSel = $dbh->prepare($select);
+                                                $stSel->execute([1]);
+                                                while ($row = $stSel->fetch(PDO::FETCH_OBJ)) {
                                                    
                                             ?>
                                                     <tr>
-                                                        <td><?php echo $row['firstname'] ." ".$row['lastname'];?></td>
-                                                        <td><?php echo $row['phonenumber'];?></td>
-                                                        <td><?php echo $row['pname'];?></td>
-                                                        <td><?php echo $row['date'];?></td>
+                                                        <td><?php echo $row->firstname." ".$row->lastname;?></td>
+                                                        <td><?php echo $row->phonenumber;?></td>
+                                                        <td><?php echo $row->pname;?></td>
+                                                        <td><?php echo $row->date;?></td>
                                                         <td>
-                                                            <a href="request.php?req=<?php echo $row['rid'];?>" class="btn btn-success">Aproove</a>
+                                                            <a href="request.php?req=<?php echo $row->rid;?>" class="btn btn-success">Aproove</a>
                                                         </td>
                                                     </tr>
                                                     <?php
@@ -200,20 +206,23 @@ if (strlen($_SESSION['username']) == 0) {
                                                 </tfoot>
                                                 <tbody>
                                                     <?php
-                                                $select = mysqli_query($con,"SELECT tblreservation.rid as rid,tblreservation.parkid as parkid,
+                                                $select = "SELECT tblreservation.rid as rid,tblreservation.parkid as parkid,
                                                 tblreservation.visitor as visitor, tblreservation.date as date,tblreservation.Status as Status,
                                                 tblvisitors.vid as vid,tblvisitors.firstname as firstname,tblvisitors.lastnmae as lastname,
                                                 tblvisitors.phonenumber as phonenumber, tblvisitors.email as email,tblparks.id as pid,
                                                 tblparks.name as pname from tblreservation LEFT JOIN tblvisitors on tblreservation.visitor =tblvisitors.vid 
-                                                LEFT JOIN tblparks ON tblreservation.parkid = tblparks.id WHERE tblreservation.Status =2");
-                                                while ($row = mysqli_fetch_array($select)) {
+                                                LEFT JOIN tblparks ON tblreservation.parkid = tblparks.id WHERE tblreservation.Status =?";
+                                                $stSel1 = $dbh->prepare($select);
+                                                $stSel1->execute([2]);
+                                            
+                                                while ($row = $stSel1->fetch(PDO::FETCH_OBJ)) {
                                                    
                                             ?>
                                                     <tr>
-                                                        <td><?php echo $row['firstname'] ." ".$row['lastname'];?></td>
-                                                        <td><?php echo $row['phonenumber'];?></td>
-                                                        <td><?php echo $row['pname'];?></td>
-                                                        <td><?php echo $row['date'];?></td>
+                                                    <td><?php echo $row->firstname." ".$row->lastname;?></td>
+                                                        <td><?php echo $row->phonenumber;?></td>
+                                                        <td><?php echo $row->pname;?></td>
+                                                        <td><?php echo $row->date;?></td>
                                                     </tr>
                                                     <?php
                                                 }

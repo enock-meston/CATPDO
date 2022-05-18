@@ -1,12 +1,12 @@
 <?php
 session_start();
-include('../includes/config.php');
+include('includes/config.php');
 error_reporting(0);
 $error = "";
 $msg = "";
-// if (strlen($_SESSION['email']) == 0) {
-//     header('location:../index.php');
-// } else {
+if (strlen($_SESSION['username']) == 0) {
+    header('location:../index.php');
+} else {
     if (isset($_POST['save'])) {
         $title =$_POST['title'];
         $descriptions=$_POST['descriptions'];
@@ -17,11 +17,13 @@ $msg = "";
 	$img_size = $_FILES['my_image']['size'];
 	$tmp_name = $_FILES['my_image']['tmp_name'];
 	$error = $_FILES['my_image']['error'];
-    $select_chech = mysqli_query($con, "SELECT * FROM tblparks WHERE name='$title'");
+    $select_chech = "SELECT * FROM tblparks WHERE name=?";
+    $statment11 = $dbh->prepare($select_chech);
+    $statment11->execute([$title]);
     // uplading Thumbnail
 	if ($img_size > 2250000) {
         $error = "Sorry, your file is too large.";
-    }elseif (mysqli_num_rows($select_chech) > 0) {
+    }elseif ($statment11->rowCount() > 0) {
         $error = 'Park is Aready In...';
     }else {
         $img_ex = pathinfo($img_name, PATHINFO_EXTENSION);
@@ -41,10 +43,10 @@ $msg = "";
                 
             // Insert into Database
             $status =1;
-            $query=mysqli_query($con,"INSERT INTO `tblparks`(`name`, `imagepark`, `location`, `descriptions`, `Status`) 
-            VALUES ('$title','$new_img_name','$parklocation','$descriptions','$status')");
-
-                if($query)
+            $query1="INSERT INTO `tblparks`(`name`, `location`,`imagepark`, `descriptions`, `Status`) VALUES (?,?,?,?,?)";
+                $queryStat = $dbh->prepare($query1);
+                
+                if($queryStat->execute([$title,$parklocation,$new_img_name,$descriptions,$status]))
                 {
                 $msg="Prossess successfully ";
                 }
@@ -162,14 +164,18 @@ $msg = "";
                                         </tfoot>
                                         <tbody>
                                             <?php
-                                                $select = mysqli_query($con,"SELECT * FROM `tblparks` Where Status=1");
-                                                while ($row = mysqli_fetch_array($select)) {
+                                            $st=1;
+                                                $select ="SELECT * FROM `tblparks` Where Status=?";
+                                                $st11= $dbh->prepare($select);
+                                                $st11->execute([$st]);
+
+                                                while ($row = $st11->fetch(PDO::FETCH_OBJ)) {
                                                    
                                             ?>
                                             <tr>
-                                                <td><?php echo $row['name'];?></td>
-                                                <td><?php echo $row['location'];?></td>
-                                                <td><?php echo $row['descriptions'];?></td>
+                                                <td><?php echo $row->name;?></td>
+                                                <td><?php echo $row->location;?></td>
+                                                <td><?php echo $row->descriptions;?></td>
                                             </tr>
                                             <?php
                                                 }
@@ -310,5 +316,5 @@ $msg = "";
 
 </html>
 <?php 
-// } 
+ } 
 ?>

@@ -3,22 +3,23 @@ $error = "";
 $msg = "";
 
 
-
     // ======
 
      if (isset($_POST['addnewbtn'])) {
         $username = $_POST['usernametxt'];
         $pass=$_POST['passwordtxt'];
         
-        $select_chech = mysqli_query($con, "SELECT * FROM tbladmin WHERE username='".trim($_POST['usernametxt'])."'");
-        if (mysqli_num_rows($select_chech) > 0) {
+        $select_chech = "SELECT * FROM tbladmin WHERE username=?";
+        $statmentSelectCheck =$dbh->prepare($select_chech);
+        $statmentSelectCheck->execute([$username]);
+        if ($statmentSelectCheck->rowCount() > 0) {
             $error="User is areald used! try again...";
         }else {
             $hashpassword=password_hash($pass, PASSWORD_BCRYPT);
             $status=1;
-            $insertadmin = mysqli_query($con,"INSERT INTO `tbladmin`(`username`, `password`, `status`) 
-            VALUES ('$username','$hashpassword','$status')");
-            if ($insertadmin) {
+            $insertadmin = "INSERT INTO `tbladmin`(`username`, `password`, `status`) VALUES (?,?,?)";
+            $inserStat = $dbh->prepare($insertadmin);
+            if ($inserStat->execute([$username,$hashpassword,$status])) {
                 $msg ="Successfull Added";
             }else {
                 $error ="Something Went Wrong";
@@ -29,12 +30,16 @@ $msg = "";
         $pass1=$_POST['password'];
         $hashpassword=password_hash($pass1, PASSWORD_BCRYPT);
         $status=1;
-        $select_chech1 = mysqli_query($con, "SELECT * FROM tbladmin WHERE username='".trim($_POST['username'])."'");
-            if (mysqli_num_rows($select_chech1) > 0) {
+        $select_chech1 = "SELECT * FROM tbladmin WHERE username=?";
+        $statmentQ = $dbh->prepare($select_chech1);
+        $statmentQ->execute([$user]);
+            if ($statmentQ->rowCount() > 0) {
                 $error="User is areald used! try again...";
             }else{
-                $updateadmin = mysqli_query($con,"UPDATE `tbladmin` SET `username`='$user',`password`='$hashpassword' WHERE username='".$_SESSION['username']."'");
-                if ($updateadmin) {
+                $userSession= $_SESSION['username'];
+                // $updateadmin = "UPDATE `tbladmin` SET `username`='$user',`password`='$hashpassword' WHERE username='$userSession'";
+                $stmtUpdate= $dbh->prepare("UPDATE `tbladmin` SET `username`='$user',`password`='$hashpassword' WHERE username='$userSession'");
+                if ($stmtUpdate->execute()) {
                     $msg ="Updated";
                 }else {
                     $error ="Something Went Wrong For Editting User Info";
@@ -134,20 +139,23 @@ $msg = "";
                 <hr>
             </div>
             <?php 
-                 $selectquery = mysqli_query($con, "SELECT * FROM tbladmin WHERE adid='". $_SESSION['ad_id']."'");
-                 while ($row2=mysqli_fetch_array($selectquery)) {
+                $adID=$_SESSION['ad_id'];
+                 $selectquery = "SELECT * FROM tbladmin WHERE adid=?";
+                 $st1 = $dbh->prepare($selectquery);
+                 $st1->execute([$adID]);
+                 while ($row2= $st1->fetch(PDO::FETCH_OBJ)) {
                      ?>
 
             <div class="modal-body">
                 <form action="" method="POST" enctype="multipart/form-data">
                     <div class="form-group">
                         <input type="text" name="username" class="form-control form-control-user" id="exampleInputEmail"
-                            aria-describedby="title" value="<?php echo $row2['username'] ;?>">
+                            aria-describedby="title" value="<?php echo $row2->username ;?>">
                     </div>
 
                     <div class="form-group">
-                        <input type="password" name="password" class="form-control form-control-user"
-                            id="exampleInputEmail" aria-describedby="location" value="<?php echo $row2['password'] ;?>"
+                        <input type="disable" name="password" class="form-control form-control-user"
+                            id="exampleInputEmail" aria-describedby="location" value="<?php echo $row2->password ;?>"
                             placeholder="Enter new password">
                     </div>
                     <div class="form-group">

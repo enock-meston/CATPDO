@@ -89,8 +89,13 @@ if (strlen($_SESSION['username']) == 0) {
                                                     </div>
                                                     <div class="row no-gutters align-items-center">
                                                         <div class="col-auto">
-                                                            <?php $query = mysqli_query($con, "SELECT * from tblvisitors where status=1");
-                                                    $countposts = mysqli_num_rows($query);
+                                                            <?php 
+                                                            $status =1;
+                                                            $query = "SELECT * from tblvisitors where status=?";
+                                                                $statmentQuery = $dbh->prepare($query);
+                                                                $statmentQuery->execute([$status]);
+
+                                                            $countposts = $statmentQuery->rowCount();
                                                     ?>
                                                             <div class="h5 mb-0 mr-3 font-weight-bold text-gray-800">
                                                                 <?php echo htmlentities($countposts); ?></div>
@@ -123,8 +128,13 @@ if (strlen($_SESSION['username']) == 0) {
                                                     </a>
                                                     <div class="row no-gutters align-items-center">
                                                         <div class="col-auto">
-                                                            <?php $query = mysqli_query($con, "SELECT * from tblparks where Status=1");
-                                                    $countposts = mysqli_num_rows($query);
+                                                        <?php 
+                                                            $status =0;
+                                                            $query = "SELECT * from tblparks where status=?";
+                                                                $statmentQuery = $dbh->prepare($query);
+                                                                $statmentQuery->execute([$status]);
+
+                                                            $countposts = $statmentQuery->rowCount();
                                                     ?>
                                                             <div class="h5 mb-0 mr-3 font-weight-bold text-gray-800">
                                                                 <?php echo htmlentities($countposts); ?></div>
@@ -157,8 +167,13 @@ if (strlen($_SESSION['username']) == 0) {
                                                     </a>
                                                     <div class="row no-gutters align-items-center">
                                                         <div class="col-auto">
-                                                            <?php $query = mysqli_query($con, "SELECT * from tblreservation");
-                                                    $countposts = mysqli_num_rows($query);
+                                                        <?php 
+                                                        $status = 1;
+                                                            $query = "SELECT * from tblreservation WHERE Status=?";
+                                                                $statmentQuery = $dbh->prepare($query);
+                                                                $statmentQuery->execute([$status]);
+
+                                                            $countposts = $statmentQuery->rowCount();
                                                     ?>
                                                             <div class="h5 mb-0 mr-3 font-weight-bold text-gray-800">
                                                                 <?php echo htmlentities($countposts); ?></div>
@@ -191,8 +206,13 @@ if (strlen($_SESSION['username']) == 0) {
                                                     </a>
                                                     <div class="row no-gutters align-items-center">
                                                         <div class="col-auto">
-                                                            <?php $query = mysqli_query($con, "SELECT * from tblreservation WHERE Status=1");
-                                                    $countposts = mysqli_num_rows($query);
+                                                        <?php 
+                                                            $status =1;
+                                                            $query = "SELECT * from tblreservation where Status=?";
+                                                                $statmentQuery = $dbh->prepare($query);
+                                                                $statmentQuery->execute([$status]);
+
+                                                            $countposts = $statmentQuery->rowCount();
                                                     ?>
                                                             <div class="h5 mb-0 mr-3 font-weight-bold text-gray-800">
                                                                 <?php echo htmlentities($countposts); ?></div>

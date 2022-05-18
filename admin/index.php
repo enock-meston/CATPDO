@@ -7,17 +7,18 @@ if (isset($_POST['loginbtn'])) {
     $emailtxt = $_POST['email'];
     $passtxt = $_POST['password'];
     $hashespas = password_hash($passtxt, PASSWORD_BCRYPT);
-    $select = mysqli_query($con, "SELECT * FROM tbladmin WHERE username='" . trim($emailtxt) . "'") or die(mysqli_error($con));
+    $select = "SELECT * FROM tbladmin WHERE username=?";
+    $stmtlogAdm= $dbh->prepare($select);
+    $stmtlogAdm->execute([$emailtxt]);
 
-
-    if (mysqli_num_rows($select) == 1) {
-        $row = mysqli_fetch_array($select);
-        $db_password = $row['password'];
-        $username = $row['username'];
-        if (password_verify(mysqli_real_escape_string($con, trim($_POST['password'])), $db_password)) {
+    if ($stmtlogAdm->rowCount() == 1) {
+        $one = $stmtlogAdm->fetch(PDO::FETCH_OBJ);
+        $db_password = $one->password;
+        $username = $one->username;
+        if (password_verify($passtxt, $db_password)) {
             // lest set the sessions here!!!
-            $_SESSION['ad_id'] = $row['adid'];
-            $_SESSION['username'] = $row['username'];
+            $_SESSION['ad_id'] = $one->adid;
+            $_SESSION['username'] = $one->username;
             header("location: dashboard.php");
             } 
             else {
