@@ -2,7 +2,7 @@
 include 'includes/config.php';
 $error = "";
 $msg = "";
-$subject="Checkout Tourism.com Account Creation";
+$subject="Rwanda Tourism Company";
 
 if (isset($_POST['savebtn'])) {
     $fname=$_POST['fname'];
@@ -19,7 +19,7 @@ if (isset($_POST['savebtn'])) {
     $stmt->execute([$email,$phone]);
 
     if ($stmt->rowCount() > 0) {
-         $error = "email or Phone Number is alread taken";
+         $error = "email or Phone Number is already taken";
     } else {
         $hashpassword=password_hash($password, PASSWORD_BCRYPT);
         $status=1;
@@ -32,7 +32,7 @@ if (isset($_POST['savebtn'])) {
      
         if ($insetStatment->execute([$reference,$fname,$lname,$phone,$email,$hashpassword,$status,$vkey,$verified])) {
             $message="Dear ".$fname." ".$lname." has email : '".$email."'
-        <br><br> Your account was created successfully!<br> Regards,<br><br> Checkout Tourism.com <br>
+        <br><br> Your account was created successfully!<br> Regards,<br><br> Rwanda Tourism Company <br>
         so Click Here to Verify Your Email 
         <a class='btn btn-primary' href='http://localhost:8080/cat1/verify.php?vkey=$vkey'>Verify now</a>";
         send_mail($subject,$message,$email);
