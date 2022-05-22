@@ -5,7 +5,7 @@
         <div class="sidebar-brand-icon rotate-n-15">
             <!-- <i class="fas fa-laugh-wink"></i> -->
         </div>
-        <div class="sidebar-brand-text mx-3">Rwanda Tourism  <sup>Company</sup></div>
+        <div class="sidebar-brand-text mx-3"><sup>Rwanda Tourism  Company</sup></div>
     </a>
     <!-- Divider -->
     <hr class="sidebar-divider my-0">
@@ -82,7 +82,7 @@
                                 </tr>
                             </tfoot>
                             <tbody>
-                                <?php
+                            <?php
                                 $uid= $_SESSION['user_id'];
                                                 $select = "SELECT tblreservation.rid as rid,tblreservation.parkid as parkid,
                                                 tblreservation.visitor as visitor, tblreservation.date as date,tblreservation.Status as status,
