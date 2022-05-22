@@ -59,7 +59,7 @@ if (isset($_POST['savebtn'])) {
     <meta name="description" content="">
     <meta name="author" content="">
 
-    <title>VN-Park - new Account</title>
+    <title>Rwanda National Park - new Account</title>
 
     <!-- Custom fonts for this template-->
     <link href="account/vendor/fontawesome-free/css/all.min.css" rel="stylesheet" type="text/css">

@@ -50,7 +50,7 @@ if (isset($_POST['loginbtn'])) {
     <meta name="description" content="">
     <meta name="author" content="">
 
-    <title>Checkout Tourism - Login</title>
+    <title>Rwanda National Park - Login</title>
 
     <!-- Custom fonts for this template-->
     <link href="account/vendor/fontawesome-free/css/all.min.css" rel="stylesheet" type="text/css">
