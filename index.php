@@ -50,7 +50,7 @@ if (isset($_POST['loginbtn'])) {
     <meta name="description" content="">
     <meta name="author" content="">
 
-    <title>Rwanda National Park - Login</title>
+    <title>Rwanda Tourism comapny Reservation System - Login</title>
 
     <!-- Custom fonts for this template-->
     <link href="account/vendor/fontawesome-free/css/all.min.css" rel="stylesheet" type="text/css">
@@ -81,7 +81,7 @@ if (isset($_POST['loginbtn'])) {
                             <div class="col-lg-6">
                                 <div class="p-5">
                                     <div class="text-center">
-                                        <h1 class="h4 text-gray-900 mb-4">Welcome Back to Kibihekane tvet tour company!</h1>
+                                        <h1 class="h4 text-gray-900 mb-4">Welcome To Rwanda Tourism company!</h1>
                                     </div>
 
                                     <div class="row">
