@@ -16,18 +16,18 @@ if (strlen($_SESSION['email']) == 0) {
         $stmt= $dbh->prepare($checkrequest);
         $stmt->execute([$userID,$vid]);
         if ($stmt->rowCount() > 0) {
-            $error ="you are areald requested this park please try otherones...";
+            $error ="you are already  requested this National Park please try otherones...";
         }else{
         $resquery="INSERT INTO `tblreservation`(`parkid`, `visitor`, `Status`) VALUES (?,?,?)";
         $stmtres= $dbh->prepare($resquery);
         $stmtres->execute([$vid,$userID,$status]);
 
         if ($stmtres->execute([$vid,$userID,$status])) {
-            send_mail("Successfull applyed","Dear ".$_SESSION['firstname']. " ".$_SESSION['lastname']." <br>
-            Thank you For asking of reservation with us!<br>",$_SESSION['email']);
-            $msg= "Successful Applyed, now check your email";
+            send_mail("Successfull Reservation National Park","Dear ".$_SESSION['firstname']. " ".$_SESSION['lastname']." <br>
+            Thank you For asking of reservation of National Park with us!<br>",$_SESSION['email']);
+            $msg= "Successful Reservation, now check your email";
         }else{
-            $error ="Sothing Went wrong...";
+            $error ="Something Went wrong...";
         }
     }
     }
@@ -41,7 +41,7 @@ if (strlen($_SESSION['email']) == 0) {
     <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
     <meta name="description" content="">
     <meta name="author" content="">
-    <title>home</title>
+    <title>Rwanda Tourism Company Reservation System</title>
     <!-- Custom fonts for this template-->
     <link href="plugins/vendor/fontawesome-free/css/all.min.css" rel="stylesheet" type="text/css">
     <link
@@ -73,7 +73,7 @@ if (strlen($_SESSION['email']) == 0) {
                 <div class="container-fluid">
                     <!-- Page Heading -->
                     <div class="d-sm-flex align-items-center justify-content-between mb-4">
-                        <h1 class="h3 mb-0 text-gray-800">Choose Place to visit</h1>
+                        <h1 class="h3 mb-0 text-gray-800">Choose Place to visit With Rwanda Tourism comapny</h1>
 
                     </div>
 
